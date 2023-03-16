@@ -9,50 +9,24 @@ if os.path.exists(libdir):
 
 import logging
 from lib import epd5in65f
-import time
 from PIL import Image,ImageDraw,ImageFont
-import traceback
+import evdev
+import subprocess
+import time
 
 logging.basicConfig(level=logging.DEBUG)
 
-def main():
+def doProcess(idx):
     try:
-        logging.info(picdir)
-        
-        epd = epd5in65f.EPD()
-
-        epd.init()
-        epd.Clear()
-
-        font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
-        font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
-        font30 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 40)
-
-        # Himage = Image.new('RGB', (epd.width, epd.height), 0xffffff)  # 255: clear the frame
-        # draw = ImageDraw.Draw(Himage)
-        # draw.text((10, 160), u'minako-ph', font = font30, fill = epd.BLACK)
-        # draw.text((10, 200), u'minako-ph', font = font30, fill = epd.ORANGE)
-        # draw.text((10, 240), u'minako-ph', font = font30, fill = epd.GREEN)
-        # draw.text((10, 280), u'minako-ph', font = font30, fill = epd.BLUE)
-        # draw.text((10, 320), u'minako-ph', font = font30, fill = epd.RED)
-        # draw.text((10, 360), u'minako-ph', font = font30, fill = epd.YELLOW)
-        # draw.line((20, 50, 70, 100), fill = 0)
-        # draw.line((70, 50, 20, 100), fill = 0)
-        # draw.rectangle((20, 50, 70, 100), outline = 0)
-        # draw.line((165, 50, 165, 100), fill = 0)
-        # draw.line((140, 75, 190, 75), fill = 0)
-        # draw.arc((140, 50, 190, 100), 0, 360, fill = 0)
-        # draw.rectangle((80, 50, 130, 100), fill = 0)
-        # draw.chord((200, 50, 250, 100), 0, 360, fill = 0)
-        # epd.display(epd.getbuffer(Himage))
-        # time.sleep(3)
-
-        Himage = Image.open(os.path.join(picdir, 'mock-2.jpg'))
-        epd.display(epd.getbuffer(Himage))
-        time.sleep(5)
-        
-        # epd.Clear()
-        # epd.sleep()
+        if idx == 0:
+            Page_1 = Image.open(os.path.join(picdir, 'page-1.jpg'))
+            epd.display(epd.getbuffer(Page_1))
+        if idx == 1:
+            Page_2 = Image.open(os.path.join(picdir, 'page-2.jpg'))
+            epd.display(epd.getbuffer(Page_2))
+        if idx == 2:
+            Page_3 = Image.open(os.path.join(picdir, 'page-3.jpg'))
+            epd.display(epd.getbuffer(Page_3))
         
     except IOError as e:
         logging.info(e)
@@ -62,11 +36,44 @@ def main():
         epd5in65f.epdconfig.module_exit()
         exit()
 
-def clear():
+
+if __name__ == '__main__':
+    # 初期化
     epd = epd5in65f.EPD()
     epd.init()
     epd.Clear()
-    epd.sleep()
 
-# main()
-clear()
+    # 初回実行
+    currentIndex = 0
+    doProcess(currentIndex)
+
+    while True:
+        try:
+            device = evdev.InputDevice('/dev/input/event2')
+
+            print('device.read_loop()')
+            print(device.read_loop())
+            
+            for event in device.read_loop():
+                if event.type == evdev.ecodes.EV_KEY:
+                    if event.value == 1: # 0:KEYUP, 1:KEYDOWN, 2: LONGDOWN
+                    
+                        if event.code == evdev.ecodes.KEY_VOLUMEUP:
+                            print(u'KEY_VOLUMEUP')
+
+                            # 参照するプロセスのIndexを更新
+                            if currentIndex < 2:
+                                currentIndex = currentIndex + 1
+                            else :
+                                currentIndex = 0
+
+
+                            # 新しいプロセスの取得
+                            doProcess(currentIndex)
+
+                        if event.code == evdev.ecodes.KEY_ENTER:
+                            print(u'KEY_ENTER') # 現状拾えてない...
+        except:
+            print('Retry...')
+            time.sleep(1)
+    
