@@ -1,12 +1,10 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
-import sys
 import os
-picdir = os.path.join(os.getcwd(), 'pic')
-libdir = os.path.join(os.getcwd(), 'lib')
-if os.path.exists(libdir):
-    sys.path.append(libdir)
+picdir = os.path.join(os.getcwd(), '../../pic')
 
+import sys
+sys.path.append('../../')
 import logging
 from lib import epd5in65f
 from PIL import Image,ImageDraw,ImageFont

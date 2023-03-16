@@ -1,0 +1,4 @@
+keyup=echo incriment > bluebutton-mode.txt
+keydown=
+longup=echo home > bluebutton-mode.txt
+longdown=

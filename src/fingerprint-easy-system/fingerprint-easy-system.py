@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding:utf-8 -*-
 import sys
+sys.path.append('../../')
 import os
 import logging
 from lib import epd5in65f
@@ -174,10 +175,7 @@ def get_num():
 
 
 # epaper初期化
-picdir = os.path.join(os.getcwd(), 'pic')
-libdir = os.path.join(os.getcwd(), 'lib')
-if os.path.exists(libdir):
-    sys.path.append(libdir)
+picdir = os.path.join(os.getcwd(), '../../pic')
 epd = epd5in65f.EPD()
 epd.init()
 # epd.Clear()
