@@ -17,13 +17,13 @@ logging.basicConfig(level=logging.DEBUG)
 def doProcess(idx):
     try:
         if idx == 0:
-            Page_1 = Image.open(os.path.join(picdir, 'page-1.jpg'))
+            Page_1 = Image.open(os.path.join(picdir, '_page-1.jpg'))
             epd.display(epd.getbuffer(Page_1))
         if idx == 1:
-            Page_2 = Image.open(os.path.join(picdir, 'page-2.jpg'))
+            Page_2 = Image.open(os.path.join(picdir, '_page-2.jpg'))
             epd.display(epd.getbuffer(Page_2))
         if idx == 2:
-            Page_3 = Image.open(os.path.join(picdir, 'page-3.jpg'))
+            Page_3 = Image.open(os.path.join(picdir, '_page-3.jpg'))
             epd.display(epd.getbuffer(Page_3))
         
     except IOError as e:
